@@ -5,16 +5,37 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
   const router = useRouter();
-  const handleNavigation = () => {
-    router.push("/phimhay"); // Navigates to the /about route
-  };
+  const [hasClickedAff, setHasClickedAff] = useState(false); // Theo dõi click lần đầu
   const [mounted, setMounted] = useState(false);
 
+  // Load trạng thái từ localStorage khi component mount
   useEffect(() => {
     setMounted(true);
+    const clicked = localStorage.getItem("rophim_first_click");
+    if (clicked === "true") {
+      setHasClickedAff(true);
+    }
   }, []);
 
+  const handleClick = () => {
+    if (!hasClickedAff) {
+      // Lần đầu: Mở aff Shopee ở tab mới
+      window.open(
+        "https://s.shopee.vn/40bwb41ZpA?sub_id=rophim-first", // <-- Giữ link của bạn, thêm sub_id track nếu muốn
+        "_blank",
+        "noopener,noreferrer"
+      );
+      // Đánh dấu đã click lần đầu (lưu vào localStorage)
+      setHasClickedAff(true);
+      localStorage.setItem("rophim_first_click", "true");
+    } else {
+      // Lần sau: Chuyển hướng bình thường sang /phimhay
+      router.push("/phimhay");
+    }
+  };
+
   if (!mounted) return null;
+
   return (
     <div className="relative w-full bg-[url('/home-background.jpg')] bg-cover bg-center">
       <div className="relative z-10 flex items-center justify-center">
@@ -31,10 +52,10 @@ export default function Home() {
               Xem Phim Miễn Phí Cực Nhanh, Chất Lượng Cao Và Cập Nhật Liên Tục
             </p>
             <button
-              onClick={handleNavigation}
-              className="flex sm:px-[32px] max-[650px]:w-full flex justify-center sm:py-[15.2px] py-[15px] cursor-pointer text-[20px] font-bold items-center gap-2 text-black bg-gradient-to-tr rounded-[32px] from-[#fecf59] to-[#fff1cc]"
+              onClick={handleClick}
+              className="flex sm:px-[32px] max-[650px]:w-full flex justify-center sm:py-[15.2px] py-[15px] cursor-pointer text-[20px] font-bold items-center gap-2 text-black bg-gradient-to-tr rounded-[32px] from-[#fecf59] to-[#fff1cc] hover:opacity-90 transition-opacity"
             >
-              Xem Ngay{" "}
+              Xem Ngay
             </button>
           </div>
         </div>
